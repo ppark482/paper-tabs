@@ -180,7 +180,6 @@ Custom property | Description | Default
   </style>
 
   <template>
-
     <paper-icon-button icon="paper-tabs:chevron-left" class$="[[_computeScrollButtonClass(_leftHidden, scrollable, hideScrollButtons)]]" on-up="_onScrollButtonUp" on-down="_onLeftScrollButtonDown" tabindex="-1"></paper-icon-button>
 
     <div id="tabsContainer" class="flex" on-track="_scroll" on-down="_down">
@@ -397,7 +396,6 @@ Custom property | Description | Default
       );
     },
 
-
     _scroll: function(e, detail) {
       if (!this.scrollable) {
         return;
@@ -450,6 +448,10 @@ Custom property | Description | Default
       this._affectScroll(this._step);
     },
 
+    get _isRTL() {
+      return window.getComputedStyle(this).direction === 'rtl';
+    },
+
     _tabChanged: function(tab, old) {
       if (!tab) {
         this._positionBar(0, 0);
@@ -480,7 +482,12 @@ Custom property | Description | Default
       // bar animation: expand
       this.$.selectionBar.classList.add('expand');
 
-      if (oldIndex < index) {
+      var moveLeft = oldIndex < index;
+      if (this._isRTL) {
+        moveLeft = !moveLeft;
+      }
+
+      if (moveLeft) {
         this._positionBar(this._calcPercent(tabRect.left + tabRect.width - oldRect.left, w) - m,
             this._left);
       } else {
